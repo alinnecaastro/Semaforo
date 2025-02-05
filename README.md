@@ -1,4 +1,4 @@
-# Semáforo 
+# Semáforo leds
 
 ## Estrutura do Projeto  
 - **build/** → Diretório de compilação gerado pelo CMake.  
