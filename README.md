@@ -4,94 +4,111 @@
 - **build/** → Diretório de compilação gerado pelo CMake.  
 - **diagram.json** → Simulação do Wokwi 
 - **CMakeLists.txt** → Configuração do CMake para compilação.  
-- **temporizador_one_shot.c** → Código principal do projeto.    
+- **Semaforo.c** → Código principal do projeto.    
 - **pico_sdk_import.cmake** → Importação do SDK do Raspberry Pi Pico.  
 - **README.md** → Documentação do projeto.  
-
+- **Semaforo_RGB** → Docoumento em txt com o codigo para usar na placa , misturando o vermelho com azul (amarelo), GPIO 13 e 11.
 
 ## Descrição Geral
- Este exercício tem como objetivo desenvolver um sistema de controle de LEDs utilizando o microcontrolador Raspberry Pi Pico W, com acionamento baseado em um botão (pushbutton). A lógica do sistema envolve o acionamento sequencial de três LEDs (azul, vermelho e verde), com intervalos de 3 segundos entre os estados dos LEDs.
+ Este projeto visa simular o funcionamento de um semáforo utilizando LEDs, com temporização de 3 segundos para cada mudança de sinal. O sistema inicia com o sinal vermelho aceso, alterna para o sinal amarelo, e, em seguida, para o sinal verde. As mudanças de estado dos LEDs ocorrem com um intervalo de 3 segundos, e essa lógica é controlada por um temporizador configurado para disparar a cada 3.000 ms. A principal funcionalidade do projeto é demonstrar a alternância dos LEDs utilizando temporizadores e funções de callback, com interação por um botão.
 
  
 
-## Video do funcionamento do projeto
-https://drive.google.com/file/d/1hFp7RoonCgcqu9AKGjFybk2F3y6eqCJv/view?usp=sharing
+## Video do funcionamento do projeto usando o led RGB e GPIO 12 
+https://drive.google.com/file/d/1hIG8jx_iI1Uijh_XgKumP72KiHPIL_Fe/view?usp=sharingg
 
-## Video do funcionamento no simulador dentro do vscode 
-https://drive.google.com/file/d/1-Tv3v2VtjqgrzVyx8CsMGfiXQHiEUawk/view?usp=sharing
+## Video do funcionamento do projeto usando a mistura do RGB GPIO 11 e 13
+https://drive.google.com/file/d/1hFvHJdBVumI_FLqVhMKsY6Kh4CNnfYm6/view?usp=drive_link
+
+## Video do funcionamento no simulador dentro do vscode com GPIO 12 
+https://drive.google.com/file/d/1xbVxYecFbzsi63KqMtRlpHYz-4fz1_2y/view?usp=sharing
+
+## Video do funcionamento no simulador dentro do vscode com GPIO 11 e 13
+https://drive.google.com/file/d/13pP_0ThIzlzZgzseRZ6ZozHRleIOc3X8/view?usp=sharing
+
+## Componentes Utilizados:
+- Microcontrolador Raspberry Pi Pico W
+- 03 LEDs (vermelho, amarelo e verde)
+- 03 Resistores de 330Ω
+- Botão (Pushbutton) conectado ao GPIO 05
+
+
+## Fluxograma Simplificado
+O fluxograma básico do semáforo segue a sequência de estados ilustrada na figura abaixo:
+
+1.  Estado inicial: LED vermelho aceso
+2. Após 3 segundos: LED amarelo aceso
+3. Após mais 3 segundos: LED verde aceso
+4. Repetição do ciclo, começando novamente com o LED vermelho.
+A alternância dos LEDs é realizada de forma sequencial, com um ciclo completo durando 9 segundos (3 segundos por estado).
 
 ## Funcionalidades do Projeto
-- O sistema começa com os três LEDs acessos, quando o botão é pressionado.
-- O temporizador é configurado com um atraso de 3 segundos. Cade vez que o temporizador dispara, ele chama uma função de callback para alternar o estado dos LEDs
-- No primeiro estado: Todos os três estão acesos.
--  No segundo estado após 3 segundos: Dois LEDs permanecem acesos, e o terceiro desligado.
--  No terceiro estado após mais 3 segundos: Apenas um LED permanece aceso, enquanto os outros dois são desligados.
-- O botão A inicia a sequência de LEDs, mas só pode fazer isso quando o último LED já estiver apagado, ou seja, a troca so pode ser feita quando a última transição (Desligado) for completada, quando o botão inicia ele proprio não poderá chamar uma nova chamada de função.
+1. Controle dos LEDs
+- O sistema inicia com o sinal vermelho aceso.
+- Após 3 segundos, o LED amarelo acende, e o vermelho é desligado.
+- Após mais 3 segundos, o LED verde acende, e o amarelo é desligado.
+- A sequência repete-se continuamente.
+
+2. Botão de Controle
+O botão (GPIO 05) é utilizado para iniciar a sequência de LEDs. A sequência só pode ser reiniciada quando o último LED (verde) for desligado, garantindo que a transição de LEDs ocorra de maneira sequencial sem interrupções.
+
+3. Temporizador (Repetindo a cada 3 segundos)
+O temporizador é configurado para disparar a cada 3.000 ms (3 segundos), acionando uma função de callback que altera o estado dos LEDs.
+
+4. Sequência de LEDs
+Inicialmente, todos os LEDs estão apagados.
+O botão A inicia a sequência, e os LEDs começam a alternar de acordo com o temporizador.
+A sequência continua com o sinal vermelho, seguido do amarelo e do verde, em ciclos de 3 segundos.
+
+5. Exibição de Mensagens na Serial
+A rotina principal imprime mensagens na porta serial a cada 1 segundo (1.000 ms), proporcionando feedback sobre o estado atual do sistema, como o número de ciclos de LEDs completados.
 
 ## Requisitos do Projeto
-- ° Os LEDs devem ser controlados através de um botão (GPIO 05)
-- ° Inicialmente, todos os LEDs devem estar apagados;
-- ° Após o acionamento do botão, a sequência de LEDs deve ser controlada conforme os seguintes estados:
-      Estado 1: Todos os LEDs acesos.
-      Estado 2: Dois LEDs acesos, um LED apagado.
-      Estado 3: Apenas um LED aceso, dois LEDs apagados.
-- ° Cada mudança de estado deve ocorrer a cada 3 segundos (3.000ms), utilizando um temporizador.
-- ° A mudança de estado dos LEDs deve ser feita dentro de funções de callback do temporizador (exemplo: turn_off_callback()).
-- ° O botão (GPIO 05) deve ser capaz de iniciar a sequência de LEDs, mas somente quando o último LED for apagado. Ou seja, o botão não pode reiniciar a sequência enquanto o temporizador ainda estiver em execução ou enquanto algum LED não tiver sido apagado.
+- LEDs devem ser controlados através de um botão conectado ao GPIO 05.
+- Inicialização com todos os LEDs apagados.
+- Sequência de LEDs:
+   - Estado 1: Todos os LEDs acesos.
+   - Estado 2: Dois LEDs acesos, um apagado.
+   - Estado 3: Apenas um LED aceso, dois apagados.
+- Temporização: Cada mudança de estado ocorre a cada 3 segundos, utilizando um temporizador.
+- Botão: O botão só pode iniciar a sequência quando todos os LEDs estiverem apagados (após o ciclo completo).
 
 ## Configuração do Ambiente
-1. Instale o SDK do Raspberry Pi Pico:
-2. Clone o repositório
-    https://github.com/alinnecaastro/temporizador_one_shot.git
 
-## **Compile o código:**
+1. Instalação do SDK do Raspberry Pi Pico
+Para configurar o ambiente de desenvolvimento, siga as instruções de instalação do SDK do Raspberry Pi Pico, incluindo a configuração do Visual Studio Code com as extensões apropriadas para compilar e carregar o código no microcontrolador.
 
-1. Certifique-se de que o SDK está instalado e funcionando corretamente no VSCode.
+2. Clone o Repositório
+Clone o repositório com o código-fonte do projeto:
+git clone: https://github.com/alinnecaastro/temporizador_one_shot.git
 
-2. Usando a extensão do Raspberry Pi Pico Visual Studio Code extension, siga os passos:
+3. Compilação do Projeto
+Para compilar o projeto, abra o Visual Studio Code e siga os seguintes passos:
 
-3. Clean CMake: Para garantir que o projeto será compilado do zero.
+- Clean CMake – Para garantir que o projeto seja compilado a partir do zero.
+- Compile Project – Para compilar o código-fonte e gerar o binário.
+- Run Project [USB] – Para carregar o código no Raspberry Pi Pico W via USB.
 
-4. Compile Project: Compilação dos binários.
-
-5. Run Project [USB]: Compila e copia o firmware para a placa automaticamente.
-
-
-## **Funcionamento do Código**
-
-1. **Inicialização**
-- Configuração dos 3 LEDs conectados aos pinos GPIO 11,12 e 13, que  serão controlados para mudar de estado.
-- Configuração de um botão A que está conectado ao pino GPIO 05, e serve para iniciar o ciclo de LEDs.
-
-2. **Sequência de LEDs**
-- Inicialmente, todos os LEDs serão acesos (nível alto).
-Após 3 segundos (tempo de atraso), dois LEDs serão desligados, deixando apenas um aceso.
-- Após mais 3 segundos, o último LED será desligado, e o sistema voltará ao estado inicial (todos os LEDs acesos).
-
-3. **Temporizador (Alarm Timer)**
-- O temporizador é configurado com um atraso de 3.000ms (3 segundos), que acionará uma função de callback para alternar o estado dos LEDs.
-- A mudança de estado dos LEDs será controlada por essa função de callback, como foi mencionado na aula síncrona (por exemplo, turn_off_callback()).
-
-4. **Botão de Controle**
-- O botão só pode iniciar a mudança de estado quando o último LED for apagado. Durante a execução do temporizador, o botão não pode iniciar a função callback, garantindo que a sequência de LEDs seja completada antes de permitir um novo ciclo.
-
-4. **Loop Principal**
-- Monitora se o botão foi pressionado e se a sequencia não está ativa
-- Agenda a primeira mudança de estado após 3 segundos
-- Incrementa o tempo decorrido a cada segundo
+4. Carregue o Firmware no Raspberry Pi Pico W
+Conecte o Raspberry Pi Pico W ao computador e faça o upload do firmware gerado para a placa.
 
 
+## Funcionamento do Código
 
-## **Como Usar**
+1. Inicialização
+O código começa configurando os pinos GPIO 11, 12 e 13 para controlar os LEDs. O botão de controle é configurado no pino GPIO 05. O estado inicial é com todos os LEDs apagados.
 
-1. Conecte os componentes conforme o diagrama de conexões.
-2. Carregue o firmware no Raspberry Pi Pico W.
-3. Interaja com o botão para acender os LEDs
+2. Sequência de LEDs
+A sequência de LEDs é gerenciada pela função de callback do temporizador. Após 3 segundos de cada transição, a função altera o estado dos LEDs, seguindo a ordem: vermelho → amarelo → verde → todos apagados. A sequência só pode ser reiniciada após a mudança de estado completo.
 
+3. Temporizador e Funções de Callback
+A função add_repeating_timer_ms() é utilizada para configurar um temporizador que aciona a função de callback a cada 3 segundos. Dentro dessa função de callback, o estado dos LEDs é alterado sequencialmente.
 
+4. Botão de Controle
+O botão inicia a sequência de LEDs, mas apenas quando o ciclo de LEDs anterior estiver completo. Enquanto o temporizador está em execução, o botão não pode reiniciar o ciclo.
 
+5. Exibição de Informações na Serial
+A rotina principal do código imprime informações na serial a cada 1 segundo, para fornecer feedback sobre o andamento da sequência de LEDs.
 
 ## Conclusão
-O código que você implementou serve para controlar três LEDs (vermelho, azul e verde) com base na interação de um botão, realizando uma sequência de acionamento e desligamento dos LEDs, e utilizando alarmes para temporização. A principal funcionalidade é permitir que os LEDs alterem seu estado de forma progressiva (todos acesos, dois acesos e um aceso), com intervalos de 3 segundos entre cada mudança de estado.
-
-```
+O código implementado permite controlar a sequência de LEDs (vermelho, amarelo e verde) com um temporizador de 3 segundos e um botão de controle. O temporizador garante que os LEDs alterem seus estados de forma sequencial e cíclica, e o botão permite iniciar a sequência somente quando o ciclo anterior tiver sido concluído. Este projeto demonstra o uso de temporizadores e controle de dispositivos eletrônicos básicos com o Raspberry Pi Pico W.

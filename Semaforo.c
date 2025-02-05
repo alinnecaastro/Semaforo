@@ -6,7 +6,7 @@
 #define YELLOW_LED 12  // Pino do LED amarelo
 #define GREEN_LED 11  // Pino do LED verde
 
-int state = 0 ;
+int state = 0;
 
 bool repeating_timer_callback(struct repeating_timer *timer) {
   switch (state) {
