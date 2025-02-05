@@ -1,4 +1,4 @@
-# Temporizador de um disparo (One Shot)
+# Semáforo 
 
 ## Estrutura do Projeto  
 - **build/** → Diretório de compilação gerado pelo CMake.  
