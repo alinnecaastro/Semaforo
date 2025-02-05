@@ -11,9 +11,9 @@ int state = 0;
 bool repeating_timer_callback(struct repeating_timer *timer) {
   switch (state) {
         case 0:
-            gpio_put(RED_LED, 1);    // Apaga o LED vermelho
-            gpio_put(YELLOW_LED, 0); // Acende o LED amarelo
-            gpio_put(GREEN_LED, 1);  // Mantém o LED verde apagado
+            gpio_put(RED_LED, 0);    // Apaga o LED vermelho
+            gpio_put(YELLOW_LED, 1); // Acende o LED amarelo
+            gpio_put(GREEN_LED, 0);  // Mantém o LED verde apagado
             state = 1;               // Avança para o próximo estado
             break;
         case 1:
