@@ -81,7 +81,7 @@ Para configurar o ambiente de desenvolvimento, siga as instruções de instalaç
 
 2. Clone o Repositório
 Clone o repositório com o código-fonte do projeto:
-git clone: https://github.com/alinnecaastro/temporizador_one_shot.git
+git clone: https://github.com/alinnecaastro/Semaforo.git
 
 3. Compilação do Projeto
 Para compilar o projeto, abra o Visual Studio Code e siga os seguintes passos:
