@@ -65,7 +65,7 @@ int main() {
         if (gpio_get(RED_LED)) {
             printf("LED Vermelho aceso\n");
         } else if (gpio_get(YELLOW_LED)) {
-            printf("LED Amarelo aceso\n");
+            printf("LED Azul aceso\n");
         } else if (gpio_get(GREEN_LED)) {
             printf("LED Verde aceso\n");
         }
